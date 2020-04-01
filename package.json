@@ -8,14 +8,14 @@
     "watch": "nodemon --exec electron .",
     "reset": "git reset --hard"
   },
-  "repository": "https://github.com/stackacademytv/master-electron",
+  "repository": "https://github.com/godfreypj/bookmarkApp.git",
   "keywords": [
     "Electron",
     "Master Electron",
     "demo"
   ],
-  "author": "GitHub, Stackacademytv",
-  "license": "CC0-1.0",
+  "author": "GitHub, godfreypj",
+  "license": "",
   "devDependencies": {
     "electron": "^5.0.10",
     "nodemon": "^1.19.2"
