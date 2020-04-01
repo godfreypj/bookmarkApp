@@ -6,8 +6,24 @@
     <title>Hello World!</title>
   </head>
   <body>
+      <!-- Header -->
+      <header>
+          <button id="show-modal">+</button>
+          <input type="text" id="search" placeholder="search">
+      </header>
 
-    <h1>Hello World!</h1>
+      <!-- Main -->
+      <main>
+          <p id="no-items">No items</p>
+          <div id="items"></div>
+      </main>
+
+      <!-- Modal -->
+      <div id="modal">
+          <input type="text" id="url" placeholder="Enter URL">
+          <button id="add-item">Add Item</button>
+          <button id="close-modal">Cancel</button>
+      </div>
 
     We are using Node.JS <strong><script>document.write(process.versions.node)</script></strong>,
     and Electron <strong><script>document.write(process.versions.electron)</script></strong>.
