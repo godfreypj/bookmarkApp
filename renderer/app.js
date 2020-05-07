@@ -1,5 +1,6 @@
 //Modules
 const { ipcRenderer } = require("electron");
+const items = require("./items")
 
 //Functions
     //Disable/Enable modal buttons - visual feedback once use enters a URL
@@ -60,8 +61,12 @@ itemUrl.addEventListener("keyup", function(e){
 })
 
 //Using ipcRenderer, listen for main process to send URL and Screenshot back to renderer
-ipcRenderer.on("new-item-success", function(e, data){
-    console.log(data);
+ipcRenderer.on("new-item-success", function(e, newItem){
+    
+    //Pass the new item to the items module, which will add it to the DOM.
+    //Second argument is boolean value that tells the items module that this is a new item and needs to be saved
+    items.addItem(newItem, true);
+
     //Reenable add/cancel buttons once URL has been added
     toggleModalButtons();
     //Hide and clear input (reset app to original state)
