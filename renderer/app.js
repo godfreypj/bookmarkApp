@@ -43,7 +43,7 @@ closeModal.addEventListener("click", function(e){
 addItem.addEventListener("click", function(e){
     //Check if URL is entered
     if(itemURL.value){
-        //Send URL entered to main process, which will fetch ScrnShot and return to renderer
+        //Send URL entered to main process, which will fetch ScrnShot of website entered, and return to renderer
         //First argument is a channel name created to send the 2nd argument to the main process
         ipcRenderer.send("new-item", itemURL.value);
         //Call disable function to provide visual feedback that an item is being added
