@@ -25,13 +25,13 @@ let showModal = document.getElementById("show-modal"),
     closeModal = document.getElementById("close-modal"),
     modal = document.getElementById("modal"),
     addItem = document.getElementById("add-item"),
-    itemURL = document.getElementById("URL")
+    itemUrl = document.getElementById("URL")
 
 //Show modal when "+" sign is clicked
 showModal.addEventListener("click", function(e){
     modal.style.display = "flex";
     //Focus on text input so no click is necessary to enter URL
-    itemURL.focus();
+    itemUrl.focus();
 });
 
 //Close modal when "cancel" is clicked
@@ -42,16 +42,16 @@ closeModal.addEventListener("click", function(e){
 //Save URL w/ a click
 addItem.addEventListener("click", function(e){
     //Check if URL is entered
-    if(itemURL.value){
+    if(itemUrl.value){
         //Send URL entered to main process, which will fetch ScrnShot of website entered, and return to renderer
         //First argument is a channel name created to send the 2nd argument to the main process
-        ipcRenderer.send("new-item", itemURL.value);
+        ipcRenderer.send("new-item", itemUrl.value);
         //Call disable function to provide visual feedback that an item is being added
         toggleModalButtons();
     }
 })
 //Save URL w/ "enter" button press
-itemURL.addEventListener("keyup", function(e){
+itemUrl.addEventListener("keyup", function(e){
     //Specify "enter" key with event argument
     if(e.key === "Enter"){
         //If "enter" key is pressed, element performs a click, which triggers above event listener
@@ -66,5 +66,5 @@ ipcRenderer.on("new-item-success", function(e, data){
     toggleModalButtons();
     //Hide and clear input (reset app to original state)
     modal.style.display = "none";
-    itemURL.value = "";
+    itemUrl.value = "";
 })

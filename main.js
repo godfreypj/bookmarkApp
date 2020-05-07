@@ -1,18 +1,19 @@
 // Modules
 const {app, BrowserWindow, ipcMain} = require("electron")
 const windowStateKeepr = require("electron-window-state")
-
+const readItem = require("./readItem")
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 //Listen on channel "new-item" for URL user entered, first arg is event 2nd arg is the URL being sent
-ipcMain.on("new-item", function(e, itemURL){
-  //Send URL and Screenshot back to renderer process for display
-  setTimeout(() => {
+ipcMain.on("new-item", function(e, itemUrl){
+  //Send URL and Screenshot back to renderer process for display.
+  //First item is URL received from renderer, second argument is the callback object that we get from the readItem module
+  readItem(itemUrl, function(item) {
     //First argument is channel we created to receive URL/ScreenShot, second arg is the data
-    e.sender.send("new-item-success", "New Item from Main!")
-  }, 2000)
+    e.sender.send("new-item-success", item)
+  })
 })
 
 // Create a new BrowserWindow when `app` is ready
