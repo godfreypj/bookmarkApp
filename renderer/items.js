@@ -16,6 +16,12 @@ fs.readFile(`${__dirname}/reader.js`, function(err, data) {
 //This item has to be parsed from a string to an array
 exports.storage = JSON.parse(localStorage.getItem("readit-Items")) || [];
 
+//Listen on channel "item-done" for data sent when the readers button is pressed
+window.addEventListener("message", function(e) {
+    console.log(e.data);
+    
+})
+
 //Persist storage, using default/built in storage for browser instance
 //First argument is key created for the items stored, the item being passed is an object
 //Therefore, it must be "stringified" to a string in order to be stored
