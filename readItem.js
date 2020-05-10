@@ -43,7 +43,6 @@ module.exports = function(url, callback){
                 screenshot: screenshot,
                 url: url
             })
-
             //Cleanup/close browser window
             offscreenWindow.close()
             offscreenWindow = null;

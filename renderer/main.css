@@ -109,6 +109,7 @@ main {
     background: #FAFAFA;
     padding: 10px;
     border-left: 10px solid lightgrey;
+    -webkit-user-select: none;
 }
 
 .read-item:hover {
