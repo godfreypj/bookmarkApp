@@ -26,7 +26,34 @@ let showModal = document.getElementById("show-modal"),
     closeModal = document.getElementById("close-modal"),
     modal = document.getElementById("modal"),
     addItem = document.getElementById("add-item"),
-    itemUrl = document.getElementById("URL")
+    itemUrl = document.getElementById("URL"),
+    search = document.getElementById("search")
+
+//Filter items with search bar
+search.addEventListener("keyup", function(e){
+    //Loop through all items in collection
+    //Retrieving items from the class name set in the items module
+    //Default type of these items are "HTML collection", so we need "Array.from() to convert to a iterable array"
+    Array.from(document.getElementsByClassName("read-item")).forEach(function(item){
+        //Hide items that do not match the entered text
+        //"hasMatch" is a boolean value that is set to true IF the inner text of the item includes what is entered in search
+        let hasMatch = item.innerText.toLowerCase().includes(search.value)
+        //Check true/false cases, setting display to "flex" if true, "none" if false (essentially hiding it)
+        if(hasMatch) {
+            item.style.display = "flex"
+        } else {
+            item.style.display = "none"
+        }
+    })
+})
+
+//Navigate item selected with up/down array keys
+document.addEventListener("keydown", function(e){
+    //If arrow up/down keys are pressed, call the changeSelection() method in the items module
+    if(e.key === "ArrowUp" || e.key === "ArrowDown"){
+        items.changeSelection(e.key);
+    }
+})
 
 //Show modal when "+" sign is clicked
 showModal.addEventListener("click", function(e){
