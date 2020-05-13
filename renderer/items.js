@@ -16,11 +16,40 @@ fs.readFile(`${__dirname}/reader.js`, function(err, data) {
 //This item has to be parsed from a string to an array
 exports.storage = JSON.parse(localStorage.getItem("readit-Items")) || [];
 
-//Listen on channel "item-done" for data sent when the readers button is pressed
+//Get data from item that has class "selected", item and item index
+let getSelectedItem = function() {
+
+    //Get itemNode that has class of "selected", aka the selected item
+    let selectedItem = document.getElementsByClassName("read-item selected")[0];
+
+    //Using a while loop we can get the index in the array of items
+    //Start with index of 0
+    let itemIndex = -3;
+    let child = selectedItem;
+    //If the item has a previous sibling (meaning it is not first), add 1 to the index
+    //This will loop until the top of the list is reached, giving you the index of the selected item
+    while( child = child.previousSibling ) {
+
+        itemIndex++;
+
+
+    }
+    //Return the data as an object, the current item and it's index
+    return {
+        node: selectedItem,
+        index: itemIndex
+    }
+
+}
+
+//Listening for "done" data sent from the "reader.js" module
 window.addEventListener("message", function(e) {
-    console.log(e.data);
-    
-})
+    //Delete item at given index when "done" button is pressed
+    console.log("Pressed");
+
+});
+
+
 
 //Persist storage, using default/built in storage for browser instance
 //First argument is key created for the items stored, the item being passed is an object
@@ -36,6 +65,9 @@ exports.select = function(e) {
 
     //Add "selected" to the currently clicked item using click event object
     e.currentTarget.classList.add("selected");
+
+    //Testing
+    console.log(getSelectedItem().index);
 }
 
 //Move to newly selected items when up/down arrow keys are pressed
