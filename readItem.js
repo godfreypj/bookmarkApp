@@ -19,7 +19,7 @@ module.exports = function(url, callback){
         show: false,
         webPreferences : {
             offscreen: true,
-            //This window will be accessing remote, insecure content3
+            //This window will be accessing remote, insecure content
             //Setting this to false keeps it from accessing the rest of the app
             nodeIntegration: false
         }

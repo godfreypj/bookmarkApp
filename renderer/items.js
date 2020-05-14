@@ -21,14 +21,16 @@ let getSelectedItem = function() {
 
     //Get itemNode that has class of "selected", aka the selected item
     let selectedItem = document.getElementsByClassName("read-item selected")[0];
+    console.log(selectedItem.previousSibling)
+    console.log(selectedItem.previousElementSibling);
 
     //Using a while loop we can get the index in the array of items
     //Start with index of 0
-    let itemIndex = -3;
+    let itemIndex = 0;
     let child = selectedItem;
     //If the item has a previous sibling (meaning it is not first), add 1 to the index
     //This will loop until the top of the list is reached, giving you the index of the selected item
-    while( child = child.previousSibling ) {
+    while( child = child.previousElementSibling ) {
 
         itemIndex++;
 
