@@ -16,15 +16,45 @@ fs.readFile(`${__dirname}/reader.js`, function(err, data) {
 //This item has to be parsed from a string to an array
 exports.storage = JSON.parse(localStorage.getItem("readit-Items")) || [];
 
-//Listening for "done" data sent from the "reader.js" module
-window.addEventListener("message", function(e) {
-    //Delete item at given index when "done" button is pressed
-    console.log("Pressed");
+// //Function to delete selected item when the "done" button is pressed in the reader window
+// let deleteItem = function(itemIndex) {
 
+//     //Remove item from storage
+//     localStorage.removeItem(itemIndex);
+//     //Save storage
+//     localStorage.save;
+
+//     //Since item is now deleted, a new item must be selected
+//     // if no items left, do nothing
+//     // if first item, select the next item now at index 0, if not, select the previous item
+//     let newSelectedItem = 0;
+
+//     if(localStorage.length) {
+//         return;
+//     } else if(itemIndex === 0) {
+//         document.getElementsByClassName("read-item")[newSelectedItem].classList.add("selected");
+//     } else {
+//         newSelectedItem = itemIndex - 1;
+//         document.getElementsByClassName("read-item")[newSelectedItem].classList.add("selected");
+//     }
+
+//     win.reload();
+// }
+
+//Listening for "done" data sent from the "reader.js" module when "done" button is clicked.
+//The "done" button will send the item index data of currently selected item to this function
+window.addEventListener("message", function(e) {
+
+    //Check to make sure this listener is getting it's data from the "reader.js" "delete-reader-item" message
+    if(e.data.action === "delete-reader-item") {
+        //Close reader window, using data sent from "reader.js" (source) and standard close function
+        e.source.close();
+    }
 });
 
+
 //Get data from item that has class "selected", item and item index
-let getSelectedItem = function() {
+const getSelectedItem = function() {
 
     //Get itemNode that has class of "selected", aka the selected item
     let currentItem = document.getElementsByClassName("read-item selected")[0];
@@ -35,14 +65,17 @@ let getSelectedItem = function() {
     let child = currentItem;
     //If the item has a previous sibling (meaning it is not first), add 1 to the index
     //This will loop until the top of the list is reached, giving you the index of the selected item
-    while( child = child.previousElementSibling) {
-        itemIndex++
+    while(child = child.previousElementSibling) {
+        itemIndex++;
     }
     //Return the data as an object, the current item and it's index
     return { 
         node: currentItem, index: itemIndex 
     }
 }
+
+//Export getSelectedItem function
+exports.getSelectedItem = getSelectedItem;
 
 //Persist storage, using default/built in storage for browser instance
 //First argument is key created for the items stored, the item being passed is an object
@@ -58,30 +91,24 @@ exports.select = function(e) {
 
     //Add "selected" to the currently clicked item using click event object
     e.currentTarget.classList.add("selected");
-
-    console.log(getSelectedItem().index)
 }
 
 //Move to newly selected items when up/down arrow keys are pressed
 exports.changeSelection = function(direction) {
     //Get currently selected item from HTML collection
-    let currentItem = document.getElementsByClassName("read-item selected")[0];
-
+    let currentItem = getSelectedItem();
 
     //Handle up/down functionality
     //If the passed argument is a keyup and the currently selected item has one above it
     // remove selected class from current one, and add it to the item before it
-    if(direction === "ArrowUp" && currentItem === document.getElementsByClassName("read-item")[0]) {
-    return;
-    }
-    else if(direction === "ArrowUp" && currentItem.previousSibling) {
-        currentItem.classList.remove("selected");
-        currentItem.previousSibling.classList.add("selected");
+    if(direction === "ArrowUp" && currentItem.node.previousElementSibling) {
+        currentItem.node.classList.remove("selected");
+        currentItem.node.previousElementSibling.classList.add("selected");
     //If the passed argument is keydown and the currently selected item has one below it
     // remove selected class from current item, and add it to the item after it
-    } else if (direction === "ArrowDown" && currentItem.nextSibling) {
-        currentItem.classList.remove("selected");
-        currentItem.nextSibling.classList.add("selected");
+    } else if (direction === "ArrowDown" && currentItem.node.nextElementSibling) {
+        currentItem.node.classList.remove("selected");
+        currentItem.node.nextElementSibling.classList.add("selected");
     }
 }
 
@@ -90,10 +117,10 @@ exports.open = function(){
     //Function only runs when there are items present; if there is are any items to read, proceed
     if(document.getElementsByClassName("read-item")[0]) {
                 //Set a variable to the selected item
-                let selectedItem = document.getElementsByClassName("read-item selected")[0];
+                let selectedItem = getSelectedItem()
 
                 //Set a variable to the selected items URL
-                let contentURL = selectedItem.dataset.url;
+                let contentURL = selectedItem.node.dataset.url;
                 
                 //Open contentURL in a new browser window.  First argument is the URL of the clicked item
                 //Second argument it title; left blank as the page will default to the title of the URL
@@ -111,8 +138,12 @@ exports.open = function(){
                 `);
 
                 //Injecting customized JavaScript for unique window function of pop-up window
-                //"readerJS is a separate JS file for unique window features"
-                readerWin.eval(readerJS);
+                // readerJS is a separate JS file for unique window features
+                //We are using the getSelectedItem function to retrieve the currently selected items index
+                // and send it to the "reader.js" module, replacing the "{index}" tag there with the actual index
+                // Upon clicking "done" in the reader window, the item index is sent back to this module to the 
+                // parent event listener above
+                readerWin.eval(readerJS.replace("{index}", selectedItem.index));
     } else {
         return;
     }

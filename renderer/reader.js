@@ -19,10 +19,15 @@ readitClose.style.boxShadow = "2px 2px 2px rbga(0,0,0,0.2";
 
 //Click listener
 readitClose.onclick = function(e) {
-    
     //Send data to parent window with HTML5 "window.opener" functionality
-    //First argument is the data being sent (as an object) second arg is the targetOrigin, * indicated no preference
-    window.opener.postMessage("item-done", "*");
+    //First argument is the data being sent (as an object).  
+    // the first piece of data in the object is a simple message to identify the action needed
+    // the second is: {index}, a unique tag that is dynamically switched when the reader window is opened
+    //The second arg is the targetOrigin, * indicated no preference
+    window.opener.postMessage({
+        action: 'delete-reader-item',
+        itemIndex: "{index}"
+    }, '*')
 }
 
 //Append to remote content body element
