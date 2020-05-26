@@ -8,7 +8,7 @@ let items = document.getElementById("items");
 //Unique JS file for reader window functionality.  Using the fs module, toString the contents of
 //the reader.js file to the readerJS variable, so we can pass it to the window that opens on double-click.
 let readerJS;
-fs.readFile(`${__dirname}/reader.js`, function(err, data) {
+fs.readFile(`${__dirname}/reader.js`, (err, data) => {
     readerJS = data.toString();
 });
 
@@ -17,44 +17,46 @@ fs.readFile(`${__dirname}/reader.js`, function(err, data) {
 exports.storage = JSON.parse(localStorage.getItem("readit-Items")) || [];
 
 // //Function to delete selected item when the "done" button is pressed in the reader window
-// let deleteItem = function(itemIndex) {
+exports.deleteItem = itemIndex => {
 
-//     //Remove item from storage
-//     localStorage.removeItem(itemIndex);
-//     //Save storage
-//     localStorage.save;
+    //Remove item from DOM
+    items.removeChild(getSelectedItem().node)
+    //Remove item from storage
+    this.storage.splice(itemIndex, 1)
+    //Persist
+    this.save()
 
-//     //Since item is now deleted, a new item must be selected
-//     // if no items left, do nothing
-//     // if first item, select the next item now at index 0, if not, select the previous item
-//     let newSelectedItem = 0;
+    //Since item is now deleted, a new item must be selected
+    // if no items left, do nothing
+    // if first item, select the next item now at index 0, if not, select the previous item
+    let newSelectedItem = 0;
 
-//     if(localStorage.length) {
-//         return;
-//     } else if(itemIndex === 0) {
-//         document.getElementsByClassName("read-item")[newSelectedItem].classList.add("selected");
-//     } else {
-//         newSelectedItem = itemIndex - 1;
-//         document.getElementsByClassName("read-item")[newSelectedItem].classList.add("selected");
-//     }
-
-//     win.reload();
-// }
+    if(this.storage.length) {
+        return;
+    } else if(itemIndex === 0) {
+        newSelectedItem = 0;
+    } else {
+        newSelectedItem = itemIndex - 1;
+        document.getElementsByClassName("read-item")[newSelectedItem].classList.add("selected");
+    }
+}
 
 //Listening for "done" data sent from the "reader.js" module when "done" button is clicked.
 //The "done" button will send the item index data of currently selected item to this function
-window.addEventListener("message", function(e) {
+window.addEventListener("message", e => {
 
     //Check to make sure this listener is getting it's data from the "reader.js" "delete-reader-item" message
     if(e.data.action === "delete-reader-item") {
-        //Close reader window, using data sent from "reader.js" (source) and standard close function
-        e.source.close();
+        //If it is, call the deleteItem function for removal
+        this.deleteItem(e.data.itemIndex)
+        //Then close the reader window
+        e.source.close()
     }
 });
 
 
 //Get data from item that has class "selected", item and item index
-const getSelectedItem = function() {
+const getSelectedItem = () => {
 
     //Get itemNode that has class of "selected", aka the selected item
     let currentItem = document.getElementsByClassName("read-item selected")[0];
@@ -80,12 +82,12 @@ exports.getSelectedItem = getSelectedItem;
 //Persist storage, using default/built in storage for browser instance
 //First argument is key created for the items stored, the item being passed is an object
 //Therefore, it must be "stringified" to a string in order to be stored
-exports.save = function(){
+exports.save = () => {
     localStorage.setItem("readit-Items", JSON.stringify(this.storage));
 }
 
 //Set an item clicked on as selected to provide functionality
-exports.select = function(e) {
+exports.select = e => {
     //Unselect currently selected item; whatever element has both classes is the selected one, remove the selected class
     getSelectedItem().node.classList.remove("selected");
 
@@ -94,7 +96,7 @@ exports.select = function(e) {
 }
 
 //Move to newly selected items when up/down arrow keys are pressed
-exports.changeSelection = function(direction) {
+exports.changeSelection = (direction) => {
     //Get currently selected item from HTML collection
     let currentItem = getSelectedItem();
 
@@ -113,7 +115,7 @@ exports.changeSelection = function(direction) {
 }
 
 //Function for opening new items that are "selected"
-exports.open = function(){
+exports.open = () => {
     //Function only runs when there are items present; if there is are any items to read, proceed
     if(document.getElementsByClassName("read-item")[0]) {
                 //Set a variable to the selected item
@@ -151,7 +153,7 @@ exports.open = function(){
 
 //Export to main renderer with this function.  First argument is the item retrieved by the readItem module
 //Second argument is a boolean value to keep check if the item is a new item or if it's from storage
-exports.addItem = function(item, isNew = false) {
+exports.addItem = (item, isNew = false) => {
 
     //Create a new DOM element in browserwindow; an itemNode
     let itemNode = document.createElement("div");

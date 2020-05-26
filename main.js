@@ -7,17 +7,17 @@ const readItem = require("./readItem")
 let mainWindow
 
 //Listen on channel "new-item" for URL user entered, first arg is event 2nd arg is the URL being sent
-ipcMain.on("new-item", function(e, itemUrl){
+ipcMain.on("new-item", (e, itemUrl) => {
   //Send URL and Screenshot back to renderer process for display.
   //First item is URL received from renderer, second argument is the callback object that we get from the readItem module
-  readItem(itemUrl, function(item) {
+  readItem(itemUrl, (item) => {
     //First argument is channel we created to receive URL/ScreenShot, second arg is the data
     e.sender.send("new-item-success", item)
   })
 })
 
 // Create a new BrowserWindow when `app` is ready
-function createWindow () {  
+createWindow = () => {  
 
   //Window state keeper
   let state = windowStateKeepr({

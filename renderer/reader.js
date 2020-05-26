@@ -18,7 +18,7 @@ readitClose.style.boxShadow = "2px 2px 2px rbga(0,0,0,0.2";
 //Functionality
 
 //Click listener
-readitClose.onclick = function(e) {
+readitClose.onclick = (e) => {
     //Send data to parent window with HTML5 "window.opener" functionality
     //First argument is the data being sent (as an object).  
     // the first piece of data in the object is a simple message to identify the action needed

@@ -5,7 +5,7 @@ const items = require("./items")
 //Functions
     //Disable/Enable modal buttons - visual feedback once use enters a URL
     //disables button to prevent duplicate items
-    const toggleModalButtons = function(){
+    const toggleModalButtons = () => {
         //Check state of button. If true, reset to normal parameters
         if(addItem.disabled === true){
             addItem.disabled = false;
@@ -30,11 +30,11 @@ let showModal = document.getElementById("show-modal"),
     search = document.getElementById("search")
 
 //Filter items with search bar
-search.addEventListener("keyup", function(e){
+search.addEventListener("keyup", e => {
     //Loop through all items in collection
     //Retrieving items from the class name set in the items module
     //Default type of these items are "HTML collection", so we need "Array.from() to convert to a iterable array"
-    Array.from(document.getElementsByClassName("read-item")).forEach(function(item){
+    Array.from(document.getElementsByClassName("read-item")).forEach(item => {
         //Hide items that do not match the entered text
         //"hasMatch" is a boolean value that is set to true IF the inner text of the item includes what is entered in search
         let hasMatch = item.innerText.toLowerCase().includes(search.value)
@@ -48,7 +48,7 @@ search.addEventListener("keyup", function(e){
 })
 
 //Navigate item selected with up/down array keys
-document.addEventListener("keydown", function(e){
+document.addEventListener("keydown", e => {
     //If arrow up/down keys are pressed, call the changeSelection() method in the items module
     if(e.key === "ArrowUp" || e.key === "ArrowDown"){
         items.changeSelection(e.key);
@@ -56,19 +56,19 @@ document.addEventListener("keydown", function(e){
 })
 
 //Show modal when "+" sign is clicked
-showModal.addEventListener("click", function(e){
+showModal.addEventListener("click", e =>{
     modal.style.display = "flex";
     //Focus on text input so no click is necessary to enter URL
     itemUrl.focus();
 });
 
 //Close modal when "cancel" is clicked
-closeModal.addEventListener("click", function(e){
+closeModal.addEventListener("click", e => {
     modal.style.display = "none"
 });
 
 //Save URL w/ a click
-addItem.addEventListener("click", function(e){
+addItem.addEventListener("click", e => {
     //Check if URL is entered
     if(itemUrl.value){
         //Send URL entered to main process, which will fetch ScrnShot of website entered, and return to renderer
@@ -79,7 +79,7 @@ addItem.addEventListener("click", function(e){
     }
 })
 //Save URL w/ "enter" button press
-itemUrl.addEventListener("keyup", function(e){
+itemUrl.addEventListener("keyup", e => {
     //Specify "enter" key with event argument
     if(e.key === "Enter"){
         //If "enter" key is pressed, element performs a click, which triggers above event listener
@@ -88,7 +88,7 @@ itemUrl.addEventListener("keyup", function(e){
 })
 
 //Using ipcRenderer, listen for main process to send URL and Screenshot back to renderer
-ipcRenderer.on("new-item-success", function(e, newItem){
+ipcRenderer.on("new-item-success", (e, newItem) => {
     
     //Pass the new item to the items module, which will add it to the DOM.
     //Second argument is boolean value that tells the items module that this is a new item and needs to be saved
