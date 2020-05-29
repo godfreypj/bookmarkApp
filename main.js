@@ -22,7 +22,7 @@ createWindow = () => {
   //Window state keeper
   let state = windowStateKeepr({
     defaultWidth: 500, defaultHeight: 650
-  })
+  });
 
   mainWindow = new BrowserWindow({
     x: state.x, y: state.y,
@@ -30,21 +30,18 @@ createWindow = () => {
     minWidth: 450, maxWidth: 650, minHeight: 300,
     webPreferences: { 
       nodeIntegration: true }
-  })
+  });
 
   // Load index.html into the new BrowserWindow
   mainWindow.loadFile('renderer/main.html');
 
   //Manage new window state
-  state.manage(mainWindow)    
-
-  // Open DevTools - Remove for PRODUCTION!
-  mainWindow.webContents.openDevTools();
+  state.manage(mainWindow);
 
   // Listen for window being closed
   mainWindow.on('closed',  () => {
     mainWindow = null
-  })
+  });
   
 }
 

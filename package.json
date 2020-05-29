@@ -1,20 +1,22 @@
 {
-  "name": "master-electron",
+  "name": "BookmarkReader",
   "version": "1.0.0",
-  "description": "Master Electron Course Code",
+  "description": "Simple Bookmark Management App",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "watch": "nodemon --exec electron .",
-    "reset": "git reset --hard"
+    "reset": "git reset --hard",
+    "build": "electron-builder --help"
   },
   "repository": "https://github.com/godfreypj/bookmarkApp.git",
+  "homepage": "https://github.com/godfreypj/bookmarkApp.git",
   "keywords": [
     "Electron",
     "Master Electron",
     "demo"
   ],
-  "author": "GitHub, godfreypj",
+  "author": "godfreypj",
   "license": "",
   "devDependencies": {
     "electron": "^5.0.10",
@@ -24,5 +26,19 @@
   "dependencies": {
     "electron-window-state": "^5.0.3",
     "minimist": "^1.2.5"
+  },
+  "build" : {
+    "appId": "com.github.godfreypj.bookmarkApp",
+    "copyright": "Copyright 2020 GodfreyPJ",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": "dmg"      
+    },
+    "win": {
+
+    },
+    "linux": {
+
+    }
   }
 }
