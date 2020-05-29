@@ -21,6 +21,31 @@ const items = require("./items")
         }
     }
 
+/*Functions for the global menu functionality.  The listeners is in "menu.js".  The function is here as both
+/ modules have access to the same global window object.
+*/
+    /*  Open the "showModal" menu when the global menu button "Add Item" is clicked. */
+    window.newItem = () => {
+        showModal.click();
+    }
+    /*  Open whatever item is selected when the "Open" button is clicked by calling the "open()" function in the "items.js" module. */
+    window.openItem = () => {
+        items.open();
+    }
+    /*  Delete whatever item is selected when the "Delete" button is clicked by calling the "deleteItem" function in the "items.js" module */
+    window.deleteItem = () => {
+        let selectedItem = items.getSelectedItem();
+        items.deleteItem(selectedItem);
+    }
+    /* Open selected item in typical browser window vice the "reader" window by calling the "openItemNative" function in the "items.js" module*/
+    window.openItemNative = () => {
+        items.openItemNative();
+    }
+    /* Focus the search bar */
+    window.searchItems = () => {
+        search.focus();
+    }
+
 // Dom Nodes
 let showModal = document.getElementById("show-modal"),
     closeModal = document.getElementById("close-modal"),

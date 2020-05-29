@@ -2,6 +2,7 @@
 
 //Modules required
 const fs = require("fs");
+const {shell} = require("electron");
 //DOM nodes
 let items = document.getElementById("items");
 
@@ -16,31 +17,6 @@ fs.readFile(`${__dirname}/reader.js`, (err, data) => {
 //This item has to be parsed from a string to an array
 exports.storage = JSON.parse(localStorage.getItem("readit-Items")) || [];
 
-// //Function to delete selected item when the "done" button is pressed in the reader window
-exports.deleteItem = itemIndex => {
-
-    //Remove item from DOM
-    items.removeChild(getSelectedItem().node)
-    //Remove item from storage
-    this.storage.splice(itemIndex, 1)
-    //Persist
-    this.save()
-
-    //Since item is now deleted, a new item must be selected
-    // if no items left, do nothing
-    // if first item, select the next item now at index 0, if not, select the previous item
-    let newSelectedItem = 0;
-
-    if(this.storage.length) {
-        return;
-    } else if(itemIndex === 0) {
-        newSelectedItem = 0;
-    } else {
-        newSelectedItem = itemIndex - 1;
-        document.getElementsByClassName("read-item")[newSelectedItem].classList.add("selected");
-    }
-}
-
 //Listening for "done" data sent from the "reader.js" module when "done" button is clicked.
 //The "done" button will send the item index data of currently selected item to this function
 window.addEventListener("message", e => {
@@ -54,9 +30,23 @@ window.addEventListener("message", e => {
     }
 });
 
+// //Function to delete selected item when the "done" button is pressed in the reader window
+exports.deleteItem = itemIndex => {
+
+    //Remove item from DOM
+    items.removeChild(this.getSelectedItem().node)
+    //Remove item from storage
+    this.storage.splice(itemIndex, 1)
+    //Persist
+    this.save()
+
+    //Select first item on the list
+    let newSelection = document.getElementsByClassName("read-item")[0];
+    newSelection.classList.add("selected");
+}
 
 //Get data from item that has class "selected", item and item index
-const getSelectedItem = () => {
+exports.getSelectedItem = () => {
 
     //Get itemNode that has class of "selected", aka the selected item
     let currentItem = document.getElementsByClassName("read-item selected")[0];
@@ -67,50 +57,46 @@ const getSelectedItem = () => {
     let child = currentItem;
     //If the item has a previous sibling (meaning it is not first), add 1 to the index
     //This will loop until the top of the list is reached, giving you the index of the selected item
-    while(child = child.previousElementSibling) {
-        itemIndex++;
-    }
+    while( (child = child.previousSibling) != null) itemIndex++;
+
     //Return the data as an object, the current item and it's index
     return { 
         node: currentItem, index: itemIndex 
     }
 }
 
-//Export getSelectedItem function
-exports.getSelectedItem = getSelectedItem;
-
 //Persist storage, using default/built in storage for browser instance
 //First argument is key created for the items stored, the item being passed is an object
 //Therefore, it must be "stringified" to a string in order to be stored
 exports.save = () => {
-    localStorage.setItem("readit-Items", JSON.stringify(this.storage));
+    localStorage.setItem("readit-items", JSON.stringify(this.storage));
 }
 
 //Set an item clicked on as selected to provide functionality
 exports.select = e => {
     //Unselect currently selected item; whatever element has both classes is the selected one, remove the selected class
-    getSelectedItem().node.classList.remove("selected");
+    this.getSelectedItem().node.classList.remove("selected");
 
     //Add "selected" to the currently clicked item using click event object
     e.currentTarget.classList.add("selected");
 }
 
 //Move to newly selected items when up/down arrow keys are pressed
-exports.changeSelection = (direction) => {
+exports.changeSelection = direction => {
     //Get currently selected item from HTML collection
-    let currentItem = getSelectedItem();
+    let currentItem = this.getSelectedItem();
 
     //Handle up/down functionality
     //If the passed argument is a keyup and the currently selected item has one above it
     // remove selected class from current one, and add it to the item before it
-    if(direction === "ArrowUp" && currentItem.node.previousElementSibling) {
+    if(direction === "ArrowUp" && currentItem.node.previousSibling) {
         currentItem.node.classList.remove("selected");
-        currentItem.node.previousElementSibling.classList.add("selected");
+        currentItem.node.previousSibling.classList.add("selected");
     //If the passed argument is keydown and the currently selected item has one below it
     // remove selected class from current item, and add it to the item after it
-    } else if (direction === "ArrowDown" && currentItem.node.nextElementSibling) {
+    } else if (direction === "ArrowDown" && currentItem.node.nextSibling) {
         currentItem.node.classList.remove("selected");
-        currentItem.node.nextElementSibling.classList.add("selected");
+        currentItem.node.nextSibling.classList.add("selected");
     }
 }
 
@@ -119,7 +105,7 @@ exports.open = () => {
     //Function only runs when there are items present; if there is are any items to read, proceed
     if(document.getElementsByClassName("read-item")[0]) {
                 //Set a variable to the selected item
-                let selectedItem = getSelectedItem()
+                let selectedItem = this.getSelectedItem()
 
                 //Set a variable to the selected items URL
                 let contentURL = selectedItem.node.dataset.url;
@@ -148,6 +134,18 @@ exports.open = () => {
                 readerWin.eval(readerJS.replace("{index}", selectedItem.index));
     } else {
         return;
+    }
+}
+
+//Function for opening the selected item in a native browser window vice the "reader" window
+exports.openItemNative = () => {
+    //Will only run if items exist in storage
+    if(document.getElementsByClassName("read-item")[0]) {
+        
+        let selectedItem = this.getSelectedItem();
+
+        //Open selected item in default browser using electrons "shell" module
+        shell.openExternal(selectedItem.node.dataset.url);
     }
 }
 
@@ -195,4 +193,4 @@ exports.addItem = (item, isNew = false) => {
 //Second argument reset to false
 this.storage.forEach( item => {
     this.addItem(item, false)
-})
+});
