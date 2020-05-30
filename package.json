@@ -7,7 +7,8 @@
     "start": "electron .",
     "watch": "nodemon --exec electron .",
     "reset": "git reset --hard",
-    "build": "electron-builder --help"
+    "build": "electron-builder -wl",
+    "win-cert": "electron-builder create-self-signed-cert -p 'godfreypj'"
   },
   "repository": "https://github.com/godfreypj/bookmarkApp.git",
   "homepage": "https://github.com/godfreypj/bookmarkApp.git",
@@ -35,10 +36,12 @@
       "target": "dmg"      
     },
     "win": {
-
+      "certificateFile": "private/godfreypj.pfx",
+      "certificatePassword": "",
+      "publisherName": "godfreypj"       
     },
     "linux": {
-
+      "category": "Utility"
     }
   }
 }
