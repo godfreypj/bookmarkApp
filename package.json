@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "electron-window-state": "^5.0.3",
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.6"
   },
   "build" : {
     "appId": "com.github.godfreypj.bookmarkApp",
